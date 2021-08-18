@@ -156,7 +156,7 @@ def eval(G,
         if "imgs" in vis:
             if verbose:
                 print("Saving image samples...")
-            save_images(images, pattern_of("images", step, "png"), idx)
+            save_images(images, pattern_of("images", step, "jpg"), idx)
 
         # Save latent vectors
         if "ltnts" in vis:
@@ -176,11 +176,11 @@ def eval(G,
 
                 if verbose:
                     print("Saving maps...")
-                save_images(soft_maps, pattern_of("softmaps", step, "png"), idx)
-                save_images(maps, pattern_of("maps", step, "png"), idx)
+                save_images(soft_maps, pattern_of("softmaps", step, "jpg"), idx)
+                save_images(maps, pattern_of("maps", step, "jpg"), idx)
 
-                save_blends(soft_maps, images, pattern_of("softblends", step, "png"), idx)
-                save_blends(maps, images, pattern_of("blends", step, "png"), idx)
+                save_blends(soft_maps, images, pattern_of("softblends", step, "jpg"), idx)
+                save_blends(maps, images, pattern_of("blends", step, "jpg"), idx)
 
             # Save maps from all attention heads and layers
             # (for efficiency, only for a small number of images)
