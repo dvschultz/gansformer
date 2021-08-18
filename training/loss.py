@@ -16,12 +16,21 @@ def G_loss(G, D,
         pl_minibatch_shrink = 2, # Minibatch shrink (for path regularization only)
         pl_decay = 0.01,         # Decay (for path regularization only)
         pl_weight = 2.0,         # Weight (for path regularization only)
+        G_top_k = False, 
+        G_top_k_gamma = 0.9, 
+        G_top_k_frac = 0.5,
         **kwargs):
 
     latents = tf.random_normal([minibatch_size] + G.input_shapes[0][1:])
     labels = dataset.get_random_labels_tf(minibatch_size)
     fake_imgs_out = G.get_output_for(latents, labels, is_training = True)[0]
     fake_scores_out = D.get_output_for(fake_imgs_out, labels, is_training = True)
+
+    if G_top_k:
+        k_frac = tf.maximum(G_top_k_gamma ** G.epochs, G_top_k_frac)
+        k = tf.cast(tf.ceil(tf.cast(minibatch_size, tf.float32) * k_frac), tf.int32)
+        lowest_k_scores, _ = tf.nn.top_k(-tf.squeeze(D_fake_scores), k=k) # want smallest probabilities not largest
+        fake_scores_out = tf.expand_dims(-lowest_k_scores, axis=1)
 
     if loss_type == "logistic":
         loss = -tf.nn.softplus(fake_scores_out)

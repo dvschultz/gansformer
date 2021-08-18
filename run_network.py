@@ -104,6 +104,16 @@ def run(**args):
         nset(args, "merge_type", "softmax")
         nset(args, "components_num", 8)
 
+    if args.topk is not None:
+        assert isinstance(args.topk, float)
+        # args.loss_args.G_top_k = True
+        # args.loss_args.G_top_k_gamma = topk
+        # args.loss_args.G_top_k_frac = 0.5
+        nset(args, "loss_args.G_top_k", True)
+        nset(args, "loss_args.G_top_k_gamma", args.topk)
+        nset(args, "loss_args.G_top_k_frac", 0.5)
+
+
     # Environment configuration
     tf_config = {
         "rnd.np_random_seed": 1000,
@@ -390,6 +400,7 @@ def main():
     parser.add_argument("--clip",               help = "Gradient clipping threshold (optional)", default = None, type = float)
     parser.add_argument("--g-lr",               help = "Generator learning rate (default: %(default)s)", default = 0.002, type = float)
     parser.add_argument("--d-lr",               help = "Discriminator learning rate (default: %(default)s)", default = 0.002, type = float)
+    parser.add_argument('--topk',               help='utilize top-k training', default = None, type=float, metavar='FLOAT')
 
     ## Logging and evaluation
     parser.add_argument("--result-dir",         help = "Root directory for experiments (default: %(default)s)", default = "results", metavar = "DIR")
